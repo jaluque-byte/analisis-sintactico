@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.1">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #4d5055; -webkit-text-stroke: #4d5055}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #0e6e6d; -webkit-text-stroke: #0e6e6d}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; -webkit-text-stroke: #000000; min-height: 16.0px}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #18702b; -webkit-text-stroke: #18702b}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #6f0ec3; -webkit-text-stroke: #6f0ec3}
+    span.s1 {font-kerning: none; color: #6f0ec3; background-color: #ecf1f7; -webkit-text-stroke: 0px #6f0ec3}
+    span.s2 {font-kerning: none; background-color: #ecf1f7}
+    span.s3 {font-kerning: none; color: #0e6e6d; background-color: #ecf1f7; -webkit-text-stroke: 0px #0e6e6d}
+    span.s4 {font-kerning: none; color: #18702b; background-color: #ecf1f7; -webkit-text-stroke: 0px #18702b}
+    span.s5 {font-kerning: none; color: #000000; background-color: #ecf1f7; -webkit-text-stroke: 0px #000000}
+    span.s6 {font-kerning: none}
+    span.s7 {font-kerning: none; color: #a4450b; background-color: #ecf1f7; -webkit-text-stroke: 0px #a4450b}
+    span.s8 {font-kerning: none; color: #6b0001; background-color: #ecf1f7; -webkit-text-stroke: 0px #6b0001}
+    span.s9 {font-kerning: none; color: #bf1c25; background-color: #ecf1f7; -webkit-text-stroke: 0px #bf1c25}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">import</span><span class="s2"> </span><span class="s3">React</span><span class="s2">, { useState, useMemo } </span><span class="s1">from</span><span class="s2"> </span><span class="s4">'react'</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1">import</span><span class="s2"> { createRoot } </span><span class="s1">from</span><span class="s2"> </span><span class="s4">'react-dom/client'</span><span class="s2">;</span></p>
+<p class="p2"><span class="s2">// Importamos más iconos para el feedback</span></p>
+<p class="p3"><span class="s1">import</span><span class="s5"> { </span><span class="s2">ChevronsUpDown</span><span class="s5">, </span><span class="s2">Check</span><span class="s5">, </span><span class="s2">X</span><span class="s5">, </span><span class="s2">BookOpenCheck</span><span class="s5">, </span><span class="s2">ThumbsUp</span><span class="s5">, </span><span class="s2">ThumbsDown</span><span class="s5"> } </span><span class="s1">from</span><span class="s5"> </span><span class="s4">'lucide-react'</span><span class="s5">;</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p2"><span class="s2">// --- Tipos Sintácticos ---</span></p>
+<p class="p3"><span class="s1">const</span><span class="s5"> </span><span class="s2">SINTAXIS_TIPOS</span><span class="s5"> = [</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span>{ value: </span><span class="s4">'sujeto'</span><span class="s2">, label: </span><span class="s4">'Sujeto'</span><span class="s2"> },</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span>{ value: </span><span class="s4">'predicado'</span><span class="s2">, label: </span><span class="s4">'Predicado'</span><span class="s2"> },</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span>{ value: </span><span class="s2">'nucleo_sujeto'</span><span class="s5">, label: </span><span class="s2">'Núcleo del Sujeto'</span><span class="s5"> },</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span>{ value: </span><span class="s2">'nucleo_predicado'</span><span class="s5">, label: </span><span class="s2">'Núcleo del Predicado (Verbo)'</span><span class="s5"> },</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span>{ value: </span><span class="s2">'cd'</span><span class="s5">, label: </span><span class="s2">'Complemento Directo (CD)'</span><span class="s5"> },</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span>{ value: </span><span class="s2">'ci'</span><span class="s5">, label: </span><span class="s2">'Complemento Indirecto (CI)'</span><span class="s5"> },</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span>{ value: </span><span class="s2">'cc'</span><span class="s5">, label: </span><span class="s2">'Complemento Circunstancial (CC)'</span><span class="s5"> },</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span>{ value: </span><span class="s4">'atributo'</span><span class="s2">, label: </span><span class="s4">'Atributo'</span><span class="s2"> },</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span>{ value: </span><span class="s2">'cpred'</span><span class="s5">, label: </span><span class="s2">'Complemento Predicativo (CPred)'</span><span class="s5"> },</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span>{ value: </span><span class="s2">'cagente'</span><span class="s5">, label: </span><span class="s2">'Complemento Agente (CAg)'</span><span class="s5"> },</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span>{ value: </span><span class="s2">'crv'</span><span class="s5">, label: </span><span class="s2">'Complemento de Régimen Verbal (CRV)'</span><span class="s5"> },</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span>{ value: </span><span class="s2">'modificador'</span><span class="s5">, label: </span><span class="s2">'Modificador/Determinante'</span><span class="s5"> },</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span>{ value: </span><span class="s4">'enlace'</span><span class="s2">, label: </span><span class="s4">'Enlace'</span><span class="s2"> },</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span>{ value: </span><span class="s4">'termino'</span><span class="s2">, label: </span><span class="s4">'Término'</span><span class="s2"> }</span></p>
+<p class="p1"><span class="s2">];</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p2"><span class="s2">// --- Oraciones ---</span></p>
+<p class="p3"><span class="s1">const</span><span class="s5"> </span><span class="s2">ORACIONES_EJEMPLO</span><span class="s5"> = [</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span>{ id: </span><span class="s7">1</span><span class="s5">, texto: </span><span class="s2">'El perro marrón compró un juguete nuevo en la tienda.'</span><span class="s5">, solucion: [</span><span class="s2">'modificador'</span><span class="s5">,</span><span class="s2">'nucleo_sujeto'</span><span class="s5">,</span><span class="s2">'modificador'</span><span class="s5">,</span><span class="s2">'nucleo_predicado'</span><span class="s5">,</span><span class="s2">'modificador'</span><span class="s5">,</span><span class="s2">'cd'</span><span class="s5">,</span><span class="s2">'modificador'</span><span class="s5">,</span><span class="s2">'enlace'</span><span class="s5">,</span><span class="s2">'modificador'</span><span class="s5">,</span><span class="s2">'termino'</span><span class="s5">] },</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span>{ id: </span><span class="s7">2</span><span class="s5">, texto: </span><span class="s2">'Mi hermana parece contenta hoy.'</span><span class="s5">, solucion: [</span><span class="s2">'modificador'</span><span class="s5">,</span><span class="s2">'nucleo_sujeto'</span><span class="s5">,</span><span class="s2">'nucleo_predicado'</span><span class="s5">,</span><span class="s2">'atributo'</span><span class="s5">,</span><span class="s2">'cc'</span><span class="s5">] },</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span>{ id: </span><span class="s7">3</span><span class="s5">, texto: </span><span class="s2">'El profesor explicó la lección a los alumnos.'</span><span class="s5">, solucion: [</span><span class="s2">'modificador'</span><span class="s5">,</span><span class="s2">'nucleo_sujeto'</span><span class="s5">,</span><span class="s2">'nucleo_predicado'</span><span class="s5">,</span><span class="s2">'modificador'</span><span class="s5">,</span><span class="s2">'cd'</span><span class="s5">,</span><span class="s2">'enlace'</span><span class="s5">,</span><span class="s2">'modificador'</span><span class="s5">,</span><span class="s2">'termino'</span><span class="s5">] }</span></p>
+<p class="p1"><span class="s2">];</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p2"><span class="s2">// --- Componente Palabra ---</span></p>
+<p class="p1"><span class="s1">function</span><span class="s2"> </span><span class="s3">Palabra</span><span class="s2">({ texto, estaSeleccionada, alHacerClick, feedback }) {</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1">let</span><span class="s5"> clases = </span><span class="s2">'px-2 py-1 m-1 cursor-pointer rounded-md transition-all duration-200 '</span><span class="s5">;</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1">if</span><span class="s5"> (estaSeleccionada) clases += </span><span class="s2">'bg-blue-600 text-white scale-105 shadow-lg'</span><span class="s5">;</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1">else</span><span class="s5"> </span><span class="s1">if</span><span class="s5"> (feedback === </span><span class="s2">'correct'</span><span class="s5">) clases += </span><span class="s2">'bg-green-100 border border-green-400 text-green-800'</span><span class="s5">;</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1">else</span><span class="s5"> </span><span class="s1">if</span><span class="s5"> (feedback === </span><span class="s2">'incorrect'</span><span class="s5">) clases += </span><span class="s2">'bg-red-100 border border-red-400 text-red-800'</span><span class="s5">;</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1">else</span><span class="s5"> clases += </span><span class="s2">'bg-gray-100 hover:bg-gray-200'</span><span class="s5">;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">return</span><span class="s2"> &lt;span onClick={alHacerClick} className={clases}&gt;{texto}&lt;/span&gt;;</span></p>
+<p class="p1"><span class="s2">}</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p2"><span class="s2">// --- Selector de Función ---</span></p>
+<p class="p1"><span class="s1">function</span><span class="s2"> </span><span class="s3">SelectorFuncion</span><span class="s2">({ valor, alCambiar }) {</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> [abierto, setAbierto] = useState(</span><span class="s1">false</span><span class="s2">);</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> etiqueta = </span><span class="s3">SINTAXIS_TIPOS</span><span class="s2">.find(t =&gt; t.value === valor)?.label || </span><span class="s4">'Asignar función...'</span><span class="s2">;</span></p>
+<p class="p6"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s2">return</span><span class="s5"> (</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">    </span>&lt;div className=</span><span class="s2">"relative w-full md:w-64"</span><span class="s5">&gt;</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">      </span>&lt;button onClick={() =&gt; setAbierto(!abierto)} className=</span><span class="s2">"flex items-center justify-between w-full px-4 py-2 border rounded-md bg-white"</span><span class="s5">&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">        </span>&lt;span&gt;{etiqueta}&lt;/span&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">        </span>&lt;</span><span class="s3">ChevronsUpDown</span><span class="s2"> className=</span><span class="s4">"w-4 h-4 text-gray-400"</span><span class="s2"> /&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">      </span>&lt;/button&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">      </span>{abierto &amp;&amp; (</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">        </span>&lt;ul className=</span><span class="s2">"absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg"</span><span class="s5">&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">          </span>{</span><span class="s3">SINTAXIS_TIPOS</span><span class="s2">.map(t =&gt; (</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">            </span>&lt;li key={t.value} onClick={() =&gt; { alCambiar(t.value); setAbierto(</span><span class="s1">false</span><span class="s2">); }} className=</span><span class="s4">"px-4 py-2 hover:bg-blue-50 cursor-pointer flex justify-between"</span><span class="s2">&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">              </span>{t.label}</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">              </span>{valor === t.value &amp;&amp; &lt;</span><span class="s3">Check</span><span class="s2"> className=</span><span class="s4">"w-4 h-4 text-blue-600"</span><span class="s2"> /&gt;}</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">            </span>&lt;/li&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">          </span>))}</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">        </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">      </span>)}</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s2">}</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p2"><span class="s2">// --- Feedback Resultado ---</span></p>
+<p class="p3"><span class="s1">function</span><span class="s5"> </span><span class="s2">FeedbackResultado</span><span class="s5">({ estado }) {</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">if</span><span class="s2"> (!estado) </span><span class="s1">return</span><span class="s2"> </span><span class="s1">null</span><span class="s2">;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> { correctas, total } = estado;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> exito = correctas === total;</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s5"> color = exito ? </span><span class="s2">'bg-green-100 text-green-800 border-green-300'</span><span class="s5"> : </span><span class="s2">'bg-yellow-100 text-yellow-800 border-yellow-300'</span><span class="s5">;</span></p>
+<p class="p3"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s5"> </span><span class="s2">Icono</span><span class="s5"> = exito ? </span><span class="s2">ThumbsUp</span><span class="s5"> : </span><span class="s2">ThumbsDown</span><span class="s5">;</span></p>
+<p class="p6"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s2">return</span><span class="s5"> (</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">    </span>&lt;div className={</span><span class="s2">`flex items-center gap-4 p-4 border rounded-lg </span><span class="s5">${color}</span><span class="s2">`</span><span class="s5">}&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">      </span>&lt;</span><span class="s3">Icono</span><span class="s2"> className=</span><span class="s4">"w-6 h-6"</span><span class="s2"> /&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">      </span>&lt;div&gt;</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">        </span>&lt;p className=</span><span class="s2">"font-bold"</span><span class="s5">&gt;{exito ? </span><span class="s2">'¡Perfecto!'</span><span class="s5"> : </span><span class="s2">'¡Casi lo tienes!'</span><span class="s5">}&lt;/p&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">        </span>&lt;p&gt;{correctas} / {total} correctas&lt;/p&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s2">}</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p2"><span class="s2">// --- Componente Principal ---</span></p>
+<p class="p6"><span class="s2">function</span><span class="s5"> </span><span class="s3">App</span><span class="s5">() {</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> [index, setIndex] = useState(</span><span class="s7">0</span><span class="s2">);</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> [seleccionadas, setSeleccionadas] = useState([]);</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> [asignaciones, setAsignaciones] = useState({});</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> [funcion, setFuncion] = useState(</span><span class="s3">SINTAXIS_TIPOS</span><span class="s2">[</span><span class="s7">0</span><span class="s2">].value);</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> [feedback, setFeedback] = useState({});</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> [resultado, setResultado] = useState(</span><span class="s1">null</span><span class="s2">);</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> oracion = </span><span class="s3">ORACIONES_EJEMPLO</span><span class="s2">[index];</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> palabras = useMemo(() =&gt; oracion.texto.replace(</span><span class="s8">/[.,]/</span><span class="s1">g</span><span class="s2">, </span><span class="s4">''</span><span class="s2">).split(</span><span class="s4">' '</span><span class="s2">), [index]);</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> togglePalabra = i =&gt; setSeleccionadas(s =&gt; s.includes(i) ? s.filter(x =&gt; x !== i) : [...s, i]);</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> asignar = () =&gt; {</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s1">if</span><span class="s2"> (!seleccionadas.length) </span><span class="s1">return</span><span class="s2">;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span>setAsignaciones(a =&gt; {</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">      </span></span><span class="s1">const</span><span class="s2"> nuevo = { ...a };</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">      </span>seleccionadas.forEach(i =&gt; nuevo[i] = funcion);</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">      </span></span><span class="s1">return</span><span class="s2"> nuevo;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span>});</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span>setSeleccionadas([]);</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span>setFeedback({});</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span>setResultado(</span><span class="s1">null</span><span class="s2">);</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span>};</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> comprobar = () =&gt; {</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s1">const</span><span class="s2"> sol = oracion.solucion;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s1">let</span><span class="s2"> correctas = </span><span class="s7">0</span><span class="s2">;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s1">const</span><span class="s2"> fb = {};</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span>palabras.forEach((p, i) =&gt; {</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">      </span></span><span class="s1">if</span><span class="s2"> (asignaciones[i] === sol[i]) { fb[i] = </span><span class="s4">'correct'</span><span class="s2">; correctas++; }</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">      </span></span><span class="s1">else</span><span class="s2"> fb[i] = </span><span class="s4">'incorrect'</span><span class="s2">;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span>});</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span>setFeedback(fb);</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span>setResultado({ correctas, total: palabras.length });</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span>};</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span></span><span class="s1">const</span><span class="s2"> limpiar = () =&gt; { setAsignaciones({}); setSeleccionadas([]); setFeedback({}); setResultado(</span><span class="s1">null</span><span class="s2">); };</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p6"><span class="s5"><span class="Apple-converted-space">  </span></span><span class="s2">return</span><span class="s5"> (</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">    </span>&lt;div className=</span><span class="s2">"min-h-screen p-6 bg-gray-50 flex flex-col items-center"</span><span class="s5">&gt;</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">      </span>&lt;div className=</span><span class="s2">"max-w-4xl w-full bg-white p-6 rounded-lg shadow-lg"</span><span class="s5">&gt;</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">        </span>&lt;h1 className=</span><span class="s2">"text-2xl font-bold text-center text-blue-700 mb-4"</span><span class="s5">&gt;</span><span class="s3">An</span><span class="s9">á</span><span class="s5">lisis </span><span class="s3">Sint</span><span class="s9">á</span><span class="s5">ctico&lt;/h1&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">        </span>&lt;p className=</span><span class="s4">"text-center text-gray-600 mb-6"</span><span class="s2">&gt;</span><span class="s3">Haz</span><span class="s2"> clic en las palabras y asigna su funci</span><span class="s9">ó</span><span class="s2">n.&lt;/p&gt;</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">        </span>&lt;div className=</span><span class="s2">"bg-blue-50 p-4 rounded-lg mb-6 flex flex-wrap justify-center"</span><span class="s5">&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">          </span>{palabras.map((p, i) =&gt; (</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">            </span>&lt;div key={i} className=</span><span class="s2">"flex flex-col items-center mx-1 mb-2"</span><span class="s5">&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">              </span>&lt;</span><span class="s3">Palabra</span><span class="s2"> texto={p} estaSeleccionada={seleccionadas.includes(i)} alHacerClick={() =&gt; togglePalabra(i)} feedback={feedback[i]} /&gt;</span></p>
+<p class="p2"><span class="s5"><span class="Apple-converted-space">              </span>{</span><span class="s2">/* Muestra la etiqueta de la función asignada */</span><span class="s5">}</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">              </span>{asignaciones[i] &amp;&amp; (</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">                </span>&lt;span className={</span><span class="s2">`mt-1 text-xs px-2 py-0.5 rounded-full </span><span class="s5">${feedback[i] === </span><span class="s2">'correct'</span><span class="s5"> ? </span><span class="s2">'bg-green-600'</span><span class="s5"> : feedback[i] === </span><span class="s2">'incorrect'</span><span class="s5"> ? </span><span class="s2">'bg-red-600'</span><span class="s5"> : </span><span class="s2">'bg-blue-600'</span><span class="s5">}</span><span class="s2"> text-white`</span><span class="s5">}&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">                  </span>{</span><span class="s3">SINTAXIS_TIPOS</span><span class="s2">.find(t =&gt; t.value === asignaciones[i])?.label}</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">                </span>&lt;/span&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">              </span>)}</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">          </span>))}</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p2"><span class="s5"><span class="Apple-converted-space">        </span>{</span><span class="s2">/* Muestra el resultado de la comprobación */</span><span class="s5">}</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">        </span>{resultado &amp;&amp; &lt;</span><span class="s3">FeedbackResultado</span><span class="s2"> estado={resultado} /&gt;}</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p2"><span class="s5"><span class="Apple-converted-space">        </span>{</span><span class="s2">/* Panel de Controles */</span><span class="s5">}</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">        </span>&lt;div className=</span><span class="s2">"flex flex-wrap justify-center items-center gap-3 mt-4"</span><span class="s5">&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">          </span>&lt;</span><span class="s3">SelectorFuncion</span><span class="s2"> valor={funcion} alCambiar={setFuncion} /&gt;</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">          </span>&lt;button onClick={asignar} className=</span><span class="s2">"px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"</span><span class="s5">&gt;</span><span class="s3">Asignar</span><span class="s5">&lt;/button&gt;</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">          </span>&lt;button onClick={comprobar} disabled={resultado !== </span><span class="s1">null</span><span class="s5">} className=</span><span class="s2">"px-4 py-2 bg-yellow-500 text-white rounded-md disabled:bg-gray-400 transition-colors"</span><span class="s5">&gt;</span><span class="s3">Comprobar</span><span class="s5">&lt;/button&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p2"><span class="s5"><span class="Apple-converted-space">        </span>{</span><span class="s2">/* Botones de Acción */</span><span class="s5">}</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">        </span>&lt;div className=</span><span class="s2">"flex flex-wrap justify-center gap-3 mt-4"</span><span class="s5">&gt;</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">          </span>&lt;button onClick={limpiar} className=</span><span class="s2">"px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"</span><span class="s5">&gt;</span><span class="s3">Limpiar</span><span class="s5">&lt;/button&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">          </span>&lt;button onClick={() =&gt; { setIndex((index + </span><span class="s7">1</span><span class="s2">) % </span><span class="s3">ORACIONES_EJEMPLO</span><span class="s2">.length); limpiar(); }} className=</span><span class="s4">"px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"</span><span class="s2">&gt;</span><span class="s3">Siguiente</span><span class="s2">&lt;/button&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s2">}</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p1"><span class="s1">const</span><span class="s2"> container = document.getElementById(</span><span class="s4">'root'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1">if</span><span class="s2"> (container) {</span></p>
+<p class="p1"><span class="s2"><span class="Apple-converted-space">  </span>createRoot(container).render(&lt;</span><span class="s3">App</span><span class="s2"> /&gt;);</span></p>
+<p class="p1"><span class="s2">} </span><span class="s1">else</span><span class="s2"> {</span></p>
+<p class="p5"><span class="s5"><span class="Apple-converted-space">  </span>console.error(</span><span class="s2">'No se encontró el elemento root.'</span><span class="s5">);</span></p>
+<p class="p1"><span class="s2">}</span></p>
+<p class="p4"><span class="s6"></span><br></p>
+<p class="p4"><span class="s6"></span><br></p>
+</body>
+</html>
