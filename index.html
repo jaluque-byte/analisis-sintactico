@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.1">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">import React, { useState, useMemo } from 'react';</p>
+<p class="p1">import { createRoot } from 'react-dom/client';</p>
+<p class="p1">import { ChevronsUpDown, Check, X, BookOpenCheck, ThumbsUp, ThumbsDown } from 'lucide-react';</p>
+<p class="p2"><br></p>
+<p class="p1">// --- Tipos Sintácticos ---</p>
+<p class="p1">const SINTAXIS_TIPOS = [</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ value: 'sujeto', label: 'Sujeto' },</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ value: 'predicado', label: 'Predicado' },</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ value: 'nucleo_sujeto', label: 'Núcleo del Sujeto' },</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ value: 'nucleo_predicado', label: 'Núcleo del Predicado (Verbo)' },</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ value: 'cd', label: 'Complemento Directo (CD)' },</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ value: 'ci', label: 'Complemento Indirecto (CI)' },</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ value: 'cc', label: 'Complemento Circunstancial (CC)' },</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ value: 'atributo', label: 'Atributo' },</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ value: 'cpred', label: 'Complemento Predicativo (CPred)' },</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ value: 'cagente', label: 'Complemento Agente (CAg)' },</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ value: 'crv', label: 'Complemento de Régimen Verbal (CRV)' },</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ value: 'modificador', label: 'Modificador/Determinante' },</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ value: 'enlace', label: 'Enlace' },</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ value: 'termino', label: 'Término' }</p>
+<p class="p1">];</p>
+<p class="p2"><br></p>
+<p class="p1">// --- Oraciones ---</p>
+<p class="p1">const ORACIONES_EJEMPLO = [</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ id: 1, texto: 'El perro marrón compró un juguete nuevo en la tienda.', solucion: ['modificador','nucleo_sujeto','modificador','nucleo_predicado','modificador','cd','modificador','enlace','modificador','termino'] },</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ id: 2, texto: 'Mi hermana parece contenta hoy.', solucion: ['modificador','nucleo_sujeto','nucleo_predicado','atributo','cc'] },</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{ id: 3, texto: 'El profesor explicó la lección a los alumnos.', solucion: ['modificador','nucleo_sujeto','nucleo_predicado','modificador','cd','enlace','modificador','termino'] }</p>
+<p class="p1">];</p>
+<p class="p2"><br></p>
+<p class="p1">// --- Componente Palabra ---</p>
+<p class="p1">function Palabra({ texto, estaSeleccionada, alHacerClick, feedback }) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>let clases = 'px-2 py-1 m-1 cursor-pointer rounded-md transition-all duration-200 ';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (estaSeleccionada) clases += 'bg-blue-600 text-white scale-105 shadow-lg';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>else if (feedback === 'correct') clases += 'bg-green-100 border border-green-400 text-green-800';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>else if (feedback === 'incorrect') clases += 'bg-red-100 border border-red-400 text-red-800';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>else clases += 'bg-gray-100 hover:bg-gray-200';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return &lt;span onClick={alHacerClick} className={clases}&gt;{texto}&lt;/span&gt;;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// --- Selector de Función ---</p>
+<p class="p1">function SelectorFuncion({ valor, alCambiar }) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const [abierto, setAbierto] = useState(false);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const etiqueta = SINTAXIS_TIPOS.find(t =&gt; t.value === valor)?.label || 'Asignar función...';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div className="relative w-full md:w-64"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onClick={() =&gt; setAbierto(!abierto)} className="flex items-center justify-between w-full px-4 py-2 border rounded-md bg-white"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span&gt;{etiqueta}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;ChevronsUpDown className="w-4 h-4 text-gray-400" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{abierto &amp;&amp; (</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;ul className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>{SINTAXIS_TIPOS.map(t =&gt; (</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;li key={t.value} onClick={() =&gt; { alCambiar(t.value); setAbierto(false); }} className="px-4 py-2 hover:bg-blue-50 cursor-pointer flex justify-between"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>{t.label}</p>
+<p class="p1"><span class="Apple-converted-space">              </span>{valor === t.value &amp;&amp; &lt;Check className="w-4 h-4 text-blue-600" /&gt;}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>))}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>)}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// --- Feedback Resultado ---</p>
+<p class="p1">function FeedbackResultado({ estado }) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!estado) return null;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const { correctas, total } = estado;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const exito = correctas === total;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const color = exito ? 'bg-green-100 text-green-800 border-green-300' : 'bg-yellow-100 text-yellow-800 border-yellow-300';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const Icono = exito ? ThumbsUp : ThumbsDown;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div className={`flex items-center gap-4 p-4 border rounded-lg ${color}`}&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;Icono className="w-6 h-6" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p className="font-bold"&gt;{exito ? '¡Perfecto!' : '¡Casi lo tienes!'}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;{correctas} / {total} correctas&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// --- Componente Principal ---</p>
+<p class="p1">function App() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const [index, setIndex] = useState(0);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const [seleccionadas, setSeleccionadas] = useState([]);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const [asignaciones, setAsignaciones] = useState({});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const [funcion, setFuncion] = useState(SINTAXIS_TIPOS[0].value);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const [feedback, setFeedback] = useState({});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const [resultado, setResultado] = useState(null);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const oracion = ORACIONES_EJEMPLO[index];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const palabras = useMemo(() =&gt; oracion.texto.replace(/[.,]/g, '').split(' '), [index]);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const togglePalabra = i =&gt; setSeleccionadas(s =&gt; s.includes(i) ? s.filter(x =&gt; x !== i) : [...s, i]);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const asignar = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!seleccionadas.length) return;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>setAsignaciones(a =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const nuevo = { ...a };</p>
+<p class="p1"><span class="Apple-converted-space">      </span>seleccionadas.forEach(i =&gt; nuevo[i] = funcion);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return nuevo;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>setSeleccionadas([]);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>setFeedback({});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>setResultado(null);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const comprobar = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const sol = oracion.solucion;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let correctas = 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const fb = {};</p>
+<p class="p1"><span class="Apple-converted-space">    </span>palabras.forEach((p, i) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (asignaciones[i] === sol[i]) { fb[i] = 'correct'; correctas++; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>else fb[i] = 'incorrect';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>setFeedback(fb);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>setResultado({ correctas, total: palabras.length });</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const limpiar = () =&gt; { setAsignaciones({}); setSeleccionadas([]); setFeedback({}); setResultado(null); };</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return (</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div className="min-h-screen p-6 bg-gray-50 flex flex-col items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div className="max-w-4xl w-full bg-white p-6 rounded-lg shadow-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1 className="text-2xl font-bold text-center text-blue-700 mb-4"&gt;Análisis Sintáctico&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p className="text-center text-gray-600 mb-6"&gt;Haz clic en las palabras y asigna su función.&lt;/p&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div className="bg-blue-50 p-4 rounded-lg mb-6 flex flex-wrap justify-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>{palabras.map((p, i) =&gt; (</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div key={i} className="flex flex-col items-center mx-1 mb-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;Palabra texto={p} estaSeleccionada={seleccionadas.includes(i)} alHacerClick={() =&gt; togglePalabra(i)} feedback={feedback[i]} /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>{asignaciones[i] &amp;&amp; &lt;span className="mt-1 text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full"&gt;{SINTAXIS_TIPOS.find(t =&gt; t.value === asignaciones[i])?.label}&lt;/span&gt;}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>))}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;FeedbackResultado estado={resultado} /&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div className="flex flex-wrap justify-center gap-3 mt-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;SelectorFuncion valor={funcion} alCambiar={setFuncion} /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onClick={asignar} className="px-4 py-2 bg-blue-600 text-white rounded-md"&gt;Asignar&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onClick={comprobar} disabled={resultado} className="px-4 py-2 bg-yellow-500 text-white rounded-md disabled:bg-gray-400"&gt;Comprobar&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div className="flex flex-wrap justify-center gap-3 mt-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onClick={limpiar} className="px-4 py-2 bg-gray-200 rounded-md"&gt;Limpiar&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onClick={() =&gt; { setIndex((index + 1) % ORACIONES_EJEMPLO.length); limpiar(); }} className="px-4 py-2 bg-green-600 text-white rounded-md"&gt;Siguiente&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">const container = document.getElementById('root');</p>
+<p class="p1">if (container) createRoot(container).render(&lt;App /&gt;);</p>
+<p class="p1">else console.error('No se encontró el elemento root.');</p>
+</body>
+</html>
